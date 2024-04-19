@@ -24,11 +24,11 @@ public class MySignature {
     private static final String VERIFY = "VERIFY";
     private static final String SIGN = "SIGN";
 
-    private static String digestType;
-    private static String signType;
+    public static String digestType;
+    public static String signType;
 
     private PrivateKey privateKey;
-    private final MessageDigest md;
+    public final MessageDigest md;
     public byte[] data;
     private PublicKey publicKey;
     private String mode;
