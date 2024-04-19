@@ -19,6 +19,7 @@ public class MySignature {
     private String algorithm;
     private PrivateKey privateKey;
     private MessageDigest md;
+    private byte[] signature;
 
     public static String extractDigestAlgo(String algo) throws NoSuchAlgorithmException {
         Pattern pattern = Pattern.compile("(.*)WITH.*");
@@ -51,4 +52,7 @@ public class MySignature {
         md.update(data);
     }
 
+    final void sign(){
+        signature = md.digest();
+    }
 }
