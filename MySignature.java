@@ -28,7 +28,7 @@ public class MySignature {
     private static String signType;
 
     private PrivateKey privateKey;
-    private MessageDigest md;
+    private final MessageDigest md;
     public byte[] data;
     private PublicKey publicKey;
     private String mode;
@@ -67,15 +67,11 @@ public class MySignature {
         mode = SIGN;
         privateKey = pk;
         data = new byte[]{};
+        md.reset();
     }
 
-    final void update(byte[] data){
-        if(Objects.equals(mode, SIGN)){
-            md.update(data);
-        }
-        else{
-            System.arraycopy(data, 0, this.data, this.data.length, data.length);
-        }
+    final void update(byte[] newData){
+        md.update(newData);
     }
 
     final void sign(){
@@ -99,18 +95,20 @@ public class MySignature {
         mode = VERIFY;
         publicKey = pk;
         data = new byte[]{};
+        md.reset();
     }
 
-    final boolean verify(byte[] signature){
+    final boolean verify(byte[] signature) {
         BigInteger signatureBigInt = new BigInteger(1, signature);
         BigInteger modulus = ((java.security.interfaces.RSAPublicKey) publicKey).getModulus();
         BigInteger publicExponent = ((java.security.interfaces.RSAPublicKey) publicKey).getPublicExponent();
+        BigInteger decryptedSignature = signatureBigInt.modPow(publicExponent, modulus);
 
-        BigInteger message = signatureBigInt.modPow(publicExponent, modulus);
+        byte[] hashOfData = md.digest();
 
-        BigInteger dataBigInt = new BigInteger(1, data);
+        BigInteger dataHashBigInt = new BigInteger(1, hashOfData);
 
-        return message.equals(dataBigInt);
+        return decryptedSignature.equals(dataHashBigInt);
     }
 
 
