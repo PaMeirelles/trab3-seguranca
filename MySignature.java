@@ -1,4 +1,5 @@
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -12,6 +13,7 @@ public class MySignature {
     ));
 
     private String algorithm;
+    private PrivateKey privateKey;
 
     private MySignature(String algo) {
         algorithm = algo;
@@ -23,4 +25,9 @@ public class MySignature {
         }
         return new MySignature(algo);
     }
+
+    final void initSign(PrivateKey pk){
+        privateKey = pk;
+    }
+
 }
