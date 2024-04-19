@@ -1,3 +1,4 @@
+import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
@@ -13,7 +14,7 @@ public class Main {
         PublicKey publicKey = keyPair.getPublic();
 
         String data = "Hello, World!";
-        byte[] dataBytes = data.getBytes("UTF-8");
+        byte[] dataBytes = data.getBytes(StandardCharsets.UTF_8);
 
         MySignature sig = MySignature.getInstance("SHA512withRSA");
         sig.initSign(privateKey);

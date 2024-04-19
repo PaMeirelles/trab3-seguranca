@@ -74,8 +74,10 @@ public class MySignature {
         md.update(newData);
     }
 
-    final void sign(){
-        //TODO: If mode is set to VERIFY, throw exception
+    final void sign() throws Exception {
+        if(Objects.equals(VERIFY, mode)){
+            throw new Exception("Não é possível assinar durante o modo de verificação!");
+        }
         if(Objects.equals(signType, "RSA")){
             byte[] digest = md.digest();
             BigInteger message = new BigInteger(1, digest);
@@ -86,8 +88,12 @@ public class MySignature {
 
             data = sig.toByteArray();
         }
+        else if(Objects.equals(signType, "ECDSA")){
+            // TODO
+            throw new UnsupportedOperationException("ECDSA signing logic not implemented yet");
+        }
         else{
-            //TODO
+            throw new UnsupportedOperationException("Signing algorithm not supported: " + signType);
         }
     }
 
@@ -98,18 +104,28 @@ public class MySignature {
         md.reset();
     }
 
-    final boolean verify(byte[] signature) {
-        BigInteger signatureBigInt = new BigInteger(1, signature);
-        BigInteger modulus = ((java.security.interfaces.RSAPublicKey) publicKey).getModulus();
-        BigInteger publicExponent = ((java.security.interfaces.RSAPublicKey) publicKey).getPublicExponent();
-        BigInteger decryptedSignature = signatureBigInt.modPow(publicExponent, modulus);
+    final boolean verify(byte[] signature) throws Exception {
+        if(Objects.equals(SIGN, mode)){
+            throw new Exception("Não é possível assinar durante o modo de verificação!");
+        }
+        if(Objects.equals(signType, "RSA")) {
+            BigInteger signatureBigInt = new BigInteger(1, signature);
+            BigInteger modulus = ((java.security.interfaces.RSAPublicKey) publicKey).getModulus();
+            BigInteger publicExponent = ((java.security.interfaces.RSAPublicKey) publicKey).getPublicExponent();
+            BigInteger decryptedSignature = signatureBigInt.modPow(publicExponent, modulus);
 
-        byte[] hashOfData = md.digest();
+            byte[] hashOfData = md.digest();
 
-        BigInteger dataHashBigInt = new BigInteger(1, hashOfData);
+            BigInteger dataHashBigInt = new BigInteger(1, hashOfData);
 
-        return decryptedSignature.equals(dataHashBigInt);
+            return decryptedSignature.equals(dataHashBigInt);
+        }
+        else if(Objects.equals(signType, "ECDSA")){
+            // TODO
+            throw new UnsupportedOperationException("ECDSA signing logic not implemented yet");
+        }
+        else{
+            throw new UnsupportedOperationException("Signing algorithm not supported: " + signType);
+        }
     }
-
-
 }
